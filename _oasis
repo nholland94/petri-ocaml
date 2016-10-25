@@ -1,0 +1,21 @@
+Name: petri
+Version: 0.1
+Synopsis: Petri Net Library
+Authors: Nathan Holland <nholland94@gmail.com>
+License: MIT
+
+OASISFormat: 0.4
+BuildTools: ocamlbuild
+Plugins: META (0.4), DevFiles (0.4)
+
+BuildDepends: batteries, ocamlgraph
+
+Library "petri"
+  Path: .
+  Pack: true
+  InternalModules: Net, Visualize
+
+Executable "example_simple"
+  Path: examples
+  MainIs: Simple.ml
+  BuildDepends: petri
