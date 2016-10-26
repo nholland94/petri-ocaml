@@ -46,6 +46,9 @@ let make_net_graph net =
   let ba = Net.backward_arcs net in
   let fa = Net.forward_arcs net in
 
+  print_endline @@ Util.string_of_int_mat ba;
+  print_endline @@ Util.string_of_int_mat fa;
+
   let iota_fold fn max base =
     let rec loop acc i =
       if i < max then loop (fn base i) (i + 1)

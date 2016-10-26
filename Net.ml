@@ -18,10 +18,10 @@ let backward_arcs { backward_arcs = ba; _ } = ba
 let forward_arcs { forward_arcs = fa; _ } = fa
 
 let make_empty places transitions =
-  let base_mat = Array.make_matrix places transitions 0 in
-  { backward_arcs = base_mat;
-    forward_arcs = base_mat;
-    transition = base_mat }
+  let make_base_mat () = Array.make_matrix places transitions 0 in
+  { backward_arcs = make_base_mat ();
+    forward_arcs = make_base_mat ();
+    transition = make_base_mat () }
 
 let check_and_set_arc arc_mat i j w =
   if not (i < Array.length arc_mat && j < Array.length arc_mat.(0)) then
@@ -29,19 +29,16 @@ let check_and_set_arc arc_mat i j w =
   else if arc_mat.(i).(j) <> 0 then
     raise (Invalid_argument "arc already set")
   else begin
-    arc_mat.(i).(j) <- w;
-    arc_mat
+    arc_mat.(i).(j) <- w
   end
 
 let add_backward_arc i j w net =
-  let ba = check_and_set_arc net.backward_arcs  i j w in
-  net.transition.(i).(j) <- net.transition.(i).(j) - w;
-  { net with backward_arcs = ba }
+  check_and_set_arc net.backward_arcs i j w;
+  net.transition.(i).(j) <- net.transition.(i).(j) - w
 
 let add_forward_arc i j w net =
-  let fa = check_and_set_arc net.forward_arcs i j w in
-  net.transition.(i).(j) <- net.transition.(i).(j) + w;
-  { net with forward_arcs = fa }
+  check_and_set_arc net.forward_arcs i j w;
+  net.transition.(i).(j) <- net.transition.(i).(j) + w
 
 let add_arc net = function
     PlaceToTransition (p, t, w) -> add_backward_arc p t w net
@@ -49,7 +46,8 @@ let add_arc net = function
 
 let make places transitions arcs =
   let net = make_empty places transitions in
-  List.fold_left add_arc net arcs
+  List.iter (add_arc net) arcs;
+  net
 
 let vec_apply fn v1 v2 =
   let cap = Array.length v1 in

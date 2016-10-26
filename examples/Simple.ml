@@ -1,7 +1,5 @@
 open Petri
 
-let places = 3
-let transitions = 3
 let arcs = [
   Net.PlaceToTransition (0, 0, 1);
   Net.TransitionToPlace (0, 0, 1);
@@ -13,5 +11,5 @@ let arcs = [
 ]
 
 let _ =
-  let net = Net.make places transitions arcs in
+  let net = Net.make 3 3 arcs in
   Visualize.display_net_graph net
