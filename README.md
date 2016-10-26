@@ -18,4 +18,4 @@ The simplest way to create a petri net is to specify a list of arc descriptors. 
 
     let _ = Net.make 2 3 arcs |> Visualize.display_net_graph
 
-[The output of the above program](assets/overview_1.png)
+![The output of the above program](assets/overview_1.png)
