@@ -12,3 +12,4 @@ val add_backward_arc : int -> int -> int -> t -> unit
 val add_forward_arc : int -> int -> int -> t -> unit
 val add_arc : t -> ArcDescriptor.t -> unit
 val fire : marked_net -> bool array -> marking
+val string_of_net : t -> string

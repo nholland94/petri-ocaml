@@ -20,7 +20,7 @@ Executable "example_simple"
   MainIs: Simple.ml
   BuildDepends: petri
 
-Executable "example_complimentary_transformation"
+Executable "example_simple_firing"
   Path: examples
-  MainIs: ComplimentaryTransformation.ml
+  MainIs: SimpleFiring.ml
   BuildDepends: petri

@@ -122,3 +122,9 @@ let fire ({ transition = transition }, marking) enabled_transitions =
   let toggle_transition switch value = if switch then value else 0 in
   let current_transition = Array.map (vec_apply toggle_transition enabled_transitions) transition in
   Array.map2 (Array.fold_left (+)) marking current_transition
+
+let string_of_net net =
+  let { backward_arcs = ba; forward_arcs = fa; _ } = net in
+  let ba_str = Util.string_of_int_mat ba in
+  let fa_str = Util.string_of_int_mat fa in
+  "Backward Arcs\n=============\n" ^ ba_str ^ "\nForward Arcs\n=============\n" ^ fa_str ^ "\n"
