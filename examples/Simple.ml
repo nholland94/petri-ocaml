@@ -1,13 +1,14 @@
 open Petri
+open Petri.ArcDescriptor
 
 let arcs = [
-  Net.PlaceToTransition (0, 0, 1);
-  Net.TransitionToPlace (0, 0, 1);
-  Net.TransitionToPlace (2, 0, 1);
-  Net.TransitionToPlace (0, 2, 1);
-  Net.PlaceToTransition (2, 2, 1);
-  Net.PlaceToTransition (1, 1, 1);
-  Net.TransitionToPlace (1, 2, 2)
+  Place 0,      Transition 0, 1;
+  Transition 0, Place 0,      1;
+  Transition 2, Place 0,      1;
+  Transition 0, Place 2,      1;
+  Place 2,      Transition 2, 1;
+  Place 1,      Transition 1, 1;
+  Transition 1, Place 2,      2
 ]
 
 let _ =

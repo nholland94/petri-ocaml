@@ -1,4 +1,5 @@
 *.dot
+*.byte
 
 configure
 _build

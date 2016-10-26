@@ -60,14 +60,13 @@ let make_net_graph net =
 
   let add_node node_type graph i = NetGraph.add_vertex graph (node_type, i) in
 
-  let add_edges from_type to_type mat graph =
+  let add_edges fn mat graph =
     let rec loop i j graph =
       if i < places then
         if j < transitions then
           let weight = mat.(i).(j) in
-          let edge = ((from_type, i), weight, (to_type, j)) in
           let graph =
-            if weight != 0 then NetGraph.add_edge_e graph edge else graph
+            if weight != 0 then NetGraph.add_edge_e graph (fn i j weight) else graph
           in
           loop i (j + 1) graph
         else loop (i + 1) 0 graph
@@ -77,11 +76,14 @@ let make_net_graph net =
     loop 0 0 graph
   in
 
+  let make_backward_arc_edge p t w = ((Place, p), w, (Transition, t)) in
+  let make_forward_arc_edge p t w = ((Transition, t), w, (Place, p)) in
+
   NetGraph.empty
     |> iota_fold (add_node Place) places
     |> iota_fold (add_node Transition) transitions
-    |> add_edges Place Transition ba
-    |> add_edges Transition Place fa
+    |> add_edges make_backward_arc_edge ba
+    |> add_edges make_forward_arc_edge fa
 
 let display_net_graph net =
   let file = open_out_bin "tmp.dot" in

@@ -1,4 +1,5 @@
 open Batteries
+open ArcDescriptor
 
 type t =
   { backward_arcs: int array array;
@@ -6,10 +7,6 @@ type t =
     transition: int array array }
 type marking = int array
 type marked_net = t * marking
-
-type arc_descriptor =
-    PlaceToTransition of int * int * int
-  | TransitionToPlace of int * int * int
 
 let places net = Array.length net.transition
 let transitions net = Array.length net.transition.(0)
@@ -28,9 +25,8 @@ let check_and_set_arc arc_mat i j w =
     raise (Invalid_argument "index out of bounds")
   else if arc_mat.(i).(j) <> 0 then
     raise (Invalid_argument "arc already set")
-  else begin
+  else
     arc_mat.(i).(j) <- w
-  end
 
 let add_backward_arc i j w net =
   check_and_set_arc net.backward_arcs i j w;
@@ -41,8 +37,10 @@ let add_forward_arc i j w net =
   net.transition.(i).(j) <- net.transition.(i).(j) + w
 
 let add_arc net = function
-    PlaceToTransition (p, t, w) -> add_backward_arc p t w net
-  | TransitionToPlace (t, p, w) -> add_forward_arc p t w net
+    Place p, Transition t, w -> add_backward_arc p t w net
+  | Transition t, Place p, w -> add_forward_arc p t w net
+  | _ ->
+      raise (Invalid_argument "arcs must go from places to transitions or from transitions to places")
 
 let make places transitions arcs =
   let net = make_empty places transitions in
@@ -122,6 +120,5 @@ let fire ({ transition = transition }, marking) enabled_transitions =
   assert (Array.length enabled_transitions = num_transitions);
 
   let toggle_transition switch value = if switch then value else 0 in
-
   let current_transition = Array.map (vec_apply toggle_transition enabled_transitions) transition in
   Array.map2 (Array.fold_left (+)) marking current_transition
