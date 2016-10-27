@@ -42,8 +42,7 @@ module DotNetGraph = Graph.Graphviz.Dot(struct
   let edge_attributes (_, n, _) = [`Label (string_of_int n); `Decorate false]
   let default_edge_attributes _ = [`Color 4771]
   let get_subgraph _ = None
-  let vertex_attributes n =
-    [`Shape (shape_of_node n); `HtmlLabel (html_of_node n)]
+  let vertex_attributes n = [`Shape (shape_of_node n); `HtmlLabel (html_of_node n)]
   let vertex_name n = string_of_node n
   let default_vertex_attributes _ = []
   let graph_attributes _ = []

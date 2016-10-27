@@ -47,6 +47,27 @@ let make places transitions arcs =
   List.iter (add_arc net) arcs;
   net
 
+let transitions_where fn mat =
+  let place_count = Array.length mat in
+  let transition_count = Array.length mat.(0) in
+  let valid_transitions = Array.make transition_count false in
+  let id x = x in
+  let rec loop p t =
+    if p < place_count then
+      if t < transition_count then begin
+        valid_transitions.(t) <- valid_transitions.(t) || fn mat.(p).(t);
+        loop p (t + 1)
+      end else loop (p + 1) 0
+    else Util.array_collect_indices id valid_transitions
+  in
+  loop 0 0
+
+let active_transitions_sub m1 m2 =
+  Util.list_sub (transitions_where ((<) 0) m1) (transitions_where ((<) 0) m2)
+
+let inputs { backward_arcs = ba; forward_arcs = fa; _ } = active_transitions_sub fa ba
+let outputs { backward_arcs = ba; forward_arcs = fa; _ } = active_transitions_sub ba fa
+
 let vec_apply fn v1 v2 =
   let cap = Array.length v1 in
   assert (cap = Array.length v2);
@@ -61,59 +82,6 @@ let vec_apply fn v1 v2 =
   in
 
   loop 0
-
-let mat_shape_equal m1 m2 =
-  Array.length m1 = Array.length m2 && Array.length m1.(0) = Array.length m2.(0)
-
-let mat_apply fn m1 m2 =
-  assert (Array.length m1 > 0);
-  assert (mat_shape_equal m1 m2);
-
-  let rows = Array.length m1 in
-  let cols = Array.length m1.(0) in
-  let mat = Array.make_matrix rows cols m1.(0).(0) in
-
-  let rec loop i j =
-    if i < rows then
-      if j < cols then begin
-        mat.(i).(j) <- fn m1.(i).(j) m2.(i).(j);
-        loop i (j + 1)
-      end else loop (i + 1) 0
-    else mat
-  in
-  
-  loop 0 0
-
-let mat_equal m1 m2 =
-  assert (mat_shape_equal m1 m2);
-
-  let rows = Array.length m1 in
-  let cols = Array.length m1.(0) in
-
-  let rec loop i j =
-    if i < rows then
-      if j < cols then begin
-        if m1.(i).(j) = m2.(i).(j) then loop i (j + 1) else false
-      end else loop (i + 1) 0
-    else true
-  in
-  
-  loop 0 0
-
-let valid pn =
-  let
-    { backward_arcs = ba;
-      forward_arcs = fa;
-      transition = t} = pn
-  in
-
-  let num_places = Array.length ba in
-  let num_transitions = if num_places > 0 then Array.length ba.(0) else 0 in
-
-  (num_places > 0 && num_transitions > 0) &&
-    List.for_all ((=) num_places) [Array.length fa; Array.length t] &&
-    List.for_all ((=) num_transitions) [Array.length fa.(0); Array.length t.(0)] &&
-    mat_equal t (mat_apply (-) fa ba)
 
 let fire ({ transition = transition }, marking) enabled_transitions =
   let num_transitions = Array.length transition.(0) in

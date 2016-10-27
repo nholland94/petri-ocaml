@@ -24,3 +24,8 @@ Executable "example_simple_firing"
   Path: examples
   MainIs: SimpleFiring.ml
   BuildDepends: petri
+
+Executable "example_read_write_system"
+  Path: examples
+  MainIs: ReadWriteSystem.ml
+  BuildDepends: petri

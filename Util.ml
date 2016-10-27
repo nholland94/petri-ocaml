@@ -2,6 +2,22 @@ open Batteries
 
 let (>>) f g x = g (f x)
 
+let list_sub base to_remove =
+  let rec loop ls = function
+      h :: t -> loop (if List.mem h ls then List.remove ls h else ls) t
+    | []     -> ls
+  in
+  loop base to_remove
+
+let array_collect_indices fn arr =
+  let rec loop ls i =
+    if i >= 0 then
+      let ls = if fn arr.(i) then i :: ls else ls in
+      loop ls (i - 1)
+    else ls
+  in
+  loop [] (Array.length arr - 1)
+
 let mat_map fn mat = Array.map (Array.map fn) mat
 let mat_reduce fn mat = Array.reduce fn (Array.map (Array.reduce fn) mat)
 
